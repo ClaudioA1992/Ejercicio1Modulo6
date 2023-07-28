@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import cl.awakelab.ejercicio1modulo6.databinding.FragmentAgregarBinding
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -23,6 +24,7 @@ private const val ARG_PARAM2 = "param2"
 class AgregarFragment : Fragment() {
 
     lateinit var binding: FragmentAgregarBinding
+    private val tareaVM: TareaVM by activityViewModels()
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -35,6 +37,7 @@ class AgregarFragment : Fragment() {
             param2 = it.getString(ARG_PARAM2)
         }
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,14 +59,14 @@ class AgregarFragment : Fragment() {
     }
 
     fun guardarTexto(text: String) {
-        val dao = TareaBaseDatos.getDatabase(requireContext()).getTaskDao()
+        val dao = TareaBaseDatos.getDatabase(requireContext()).getTareaDao()
         val tarea = Tarea(text, " ")
         GlobalScope.launch { dao.insertarTarea(tarea) }
     }
 
     private fun cargarTareas() {
-        val dao = TareaBaseDatos.getDatabase(requireContext()).getTaskDao()
-        val tareas = dao.getTareas().observe(requireActivity()) {
+        val dao = TareaBaseDatos.getDatabase(requireContext()).getTareaDao()
+        tareaVM.obtenerTareas().observe(requireActivity()) {
             val tareasAsText = it.joinToString("\n") { it.nombre }
             binding.textView.text = tareasAsText
         }
