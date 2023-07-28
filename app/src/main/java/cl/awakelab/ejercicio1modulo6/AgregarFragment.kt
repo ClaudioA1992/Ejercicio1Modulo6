@@ -63,11 +63,11 @@ class AgregarFragment : Fragment() {
 
     private fun cargarTareas() {
         val dao = TareaBaseDatos.getDatabase(requireContext()).getTaskDao()
-        GlobalScope.launch {
-            val tareas = dao.getTareas()
-            val tareasAsText = tareas.joinToString("\n") { it.nombre }
+        val tareas = dao.getTareas().observe(requireActivity()) {
+            val tareasAsText = it.joinToString("\n") { it.nombre }
             binding.textView.text = tareasAsText
         }
+
     }
 
     companion object {
